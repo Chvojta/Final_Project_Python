@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* Moves everything down */
+    .title {
+        margin-top: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    h1 {
+        color: #302d2d;
+        font-size: 3rem;
+        margin: 0;
+    }
+
+    .middle-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 50px;
+    }
+
+    .subtitle-box {
+        background-color: #403d3d;
+        color: white;
+        font-size: 1.3rem;
+        padding: 20px 40px;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        width: 60%;
+        text-align: center;
+        z-index: 10;
+    }
+
+    .bottom-section {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 80%;
+        margin-top: 90px; /* Adjusted for spacing */
+        position: relative;
+    }
+
+    .button {
+        background-color: #f2e0e0; /* Slightly more maroon but still light */
+        color: #302d2d;
+        font-size: 1.2rem;
+        padding: 20px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        width: 30%;
+        height: 100px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s;
+    }
+
+    .button:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Adjusted Vertical Connector Line (Middle) */
+    .connector {
+        position: absolute;
+        top: -90px; /* Adjusted from -90px */
+        left: 50%;
+        width: 3px;
+        height: 90px;
+        background-color: #403444;
+    }
+
+    /* Adjusted Horizontal Line */
+    .horizontal-line {
+        position: absolute;
+        top: -40px; /* Adjusted from -40px */
+        left: 20%;
+        width: 60%;
+        height: 3px;
+        background-color: #403444;
+    }
+
+    /* Adjusted Vertical Lines */
+    .vertical-lines {
+        position: absolute;
+        width: 3px;
+        height: 40px;
+        background-color: #403444;
+    }
+
+    .left-line {
+        left: 20%;
+        top: -40px; /* Adjusted from -40px */
+    }
+
+    .right-line {
+        left: 80%;
+        top: -40px; /* Adjusted from -40px */
+    }
+    
+    /* Node styling for line intersections */
+    .node {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: white;
+        border: 2px solid #800000; /* Maroon border */
+        z-index: 20; /* Ensure nodes appear above lines */
+        transform: translate(-50%, -50%); /* Center the node on the intersection */
+    }
+    
+    /* Position for the middle node (where vertical connector meets horizontal line) */
+    .middle-node {
+        left: 50%;
+        top: -38px; /* Moved down from -40px */
+    }
+    
+    /* Position for the left node */
+    .left-node {
+        left: 20%;
+        top: -38px; /* Moved down from -40px */
+    }
+    
+    /* Position for the right node */
+    .right-node {
+        left: 80%;
+        top: -38px; /* Moved down from -40px */
+    }
+</style>
+
+<div class="title">
+    <h1>Welcome to QuickBlink</h1>
+</div>
+
+<div class="middle-section">
+    <div class="subtitle-box">
+        The unified platform for rapid value creation estimation for software businesses
+    </div>
+</div>
+
+<div class="bottom-section">
+    <div class="connector"></div>
+    <div class="horizontal-line"></div>
+    <div class="vertical-lines left-line"></div>
+    <div class="vertical-lines right-line"></div>
+    
+    <!-- Nodes at line intersections -->
+    <div class="node middle-node"></div>
+    <div class="node left-node"></div>
+    <div class="node right-node"></div>
+
+    <button class="button">Explore cost savings at my company</button>
+    <button class="button">Explore revenue growth potential at my company</button>
+    <button class="button">Explore optimizing my capital structure</button>
+</div>
+
+{% endblock %}

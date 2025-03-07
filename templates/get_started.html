@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block body_class %}get-started{% endblock %}
+
+{% block container_style %}
+display: block;
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-container {
+        position: relative;
+        height: 100vh;
+        text-align: left;
+        width: 100%;
+        padding-left: 5%;
+        padding-top: 35px;
+    }
+
+    .section {
+        margin-bottom: 100px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #302d2d;
+        margin-bottom: 5px;
+    }
+
+    .underline {
+        width: 35vw;
+        height: 2px;
+        background-color: #302d2d;
+        margin-bottom: 15px;
+    }
+
+    /* Modern Download & Upload Buttons */
+    .download-container, .upload-container, .results-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Circle Icons */
+    .download-icon, .upload-icon, .results-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #403d3d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .download-icon svg, .upload-icon svg, .results-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+    }
+
+    /* Buttons */
+    .download-button, .upload-button, .results-button {
+        background: none;
+        border: none;
+        color: #403d3d;
+        font-size: 1.2rem;
+        cursor: pointer;
+        font-weight: bold;
+        transition: none;
+    }
+
+    .download-button:hover, .upload-button:hover, .results-button:hover {
+        color: #403d3d;
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .flash-message {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+    .flash-message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .flash-message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    /* Disabled button */
+    .disabled-button {
+        opacity: 0.5;
+        cursor: not-allowed !important;
+    }
+    
+    /* Ready-to-click button styling */
+    .ready-button {
+        padding: 8px 15px;
+        border: 2px solid #4caf50;
+        border-radius: 5px;
+        background-color: rgba(76, 175, 80, 0.1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        transition: none;
+    }
+    
+    .ready-button:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    .guide-panel {
+        position: fixed;
+        right: 0;
+        top: 60px;
+        width: 45%;
+        height: calc(100vh - 60px);
+        background: rgba(255, 255, 255, 0.7);
+        padding: 2rem 3rem;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .guide-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #302d2d;
+        margin-bottom: 1rem;
+    }
+
+    .guide-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .step-number {
+        background-color: #403d3d;
+        color: white;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .step-content {
+        flex: 1;
+    }
+
+    .step-content h3 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #302d2d;
+        margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+        margin: 0;
+    }
+    
+    .filename-info {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="main-content">
+    <div class="page-container">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="section">
+            <div class="section-title">Download Input Template</div>
+            <div class="underline"></div>
+            <div class="download-container">
+                <div class="download-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 16l-6-6h4V4h4v6h4l-6 6z"/><path d="M4 18h16v2H4v-2z"/></svg>
+                </div>
+                <a href="/download-template" class="download-button">Download</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Upload Data</div>
+            <div class="underline"></div>
+            <div class="upload-container">
+                <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 4l6 6h-4v6h-4v-6H6l6-6z"/><path d="M4 20h16v2H4v-2z"/>
+                    </svg>
+                </div>
+                <form action="/upload" method="POST" enctype="multipart/form-data" style="display: inline;">
+                    <button type="button" class="upload-button" onclick="document.getElementById('fileInput').click()">Upload</button>
+                    <input type="file" id="fileInput" name="file" style="display: none;" onchange="this.form.submit()">
+                </form>
+                <div class="filename-info">Please upload the completed template</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">View Results</div>
+            <div class="underline"></div>
+            <div class="results-container">
+                <div class="results-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M5 3h2v18H5V3zm6 6h2v12h-2V9zm6 4h2v8h-2v-8z"/>
+                    </svg>
+                </div>
+                {% if session.get('file_uploaded') %}
+                    <a href="{{ url_for('select_strategy') }}" class="results-button ready-button">Get Results</a>
+                {% else %}
+                    <span class="results-button disabled-button" title="Please upload a file first">Get Results</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="guide-panel">
+    <h2 class="guide-title">How to Use Input File</h2>
+    <div class="guide-steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>Download Template</h3>
+                <p>Start by downloading our Excel template. This contains all the necessary sheets and formatting. Only change the cells that are yellow, and the blue cells are optional, do not change any sheet names, and everything should be a number, employee id (can be any format), or one of the forced values for job title cells.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>Fill Income Statement</h3>
+                <p>Enter your company's revenue, costs, and operating expenses for the past three years. Only change cells highlighted in yellow. This is critical becuase all value creaetion analysis will tie back into the company's income statement / overall financial performance</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3>Add Relevant Data</h3>
+                <p>Input as much data as you are able to / comfortable with. The more sheets you fill out, the more analyses will be generated.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3>Upload & Analyze</h3>
+                <p>Upload your completed file and select a level of aggressiveness in the optimization strategy to see potential improvements.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

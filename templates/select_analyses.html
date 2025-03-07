@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block body_class %}analyses-select{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <h1>Select Analyses to Run</h1>
+    <p>Choose which analyses you want to include in your optimization:</p>
+    
+    <form action="{{ url_for('results') }}" method="POST">
+        <!-- Pass along the strategy from previous page -->
+        <input type="hidden" name="strategy" value="{{ strategy }}">
+        
+        <div class="analyses-grid">
+            {% for key, analysis in available_analyses.items() %}
+            <div class="analysis-card">
+                <input type="checkbox" id="{{ key }}" name="analyses" value="{{ key }}" checked>
+                <label for="{{ key }}">
+                    <h3>{{ analysis.name }}</h3>
+                    <p>{{ analysis.description }}</p>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn">Run Analysis</button>
+    </form>
+</div>
+{% endblock %} 

@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Static styles */
+    .results-container {
+        position: relative;
+        width: 100%;
+        height: 600px;
+        margin-top: 50px;
+    }
+
+    /* Top Headers */
+    .header-box {
+        position: absolute;
+        top: 0;
+        width: 35%;
+        height: 50px;
+        color: rgb(55, 5, 63);
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 25px;
+    }
+
+    #original-header {
+        left: 20%;
+    }
+
+    #improved-header {
+        right: 5%;
+    }
+
+    /* Light Background Box for Income Statements */
+    .income-background {
+        position: absolute;
+        top: 60px;
+        width: 38%;
+        height: 500px;
+        background-color: rgba(255, 255, 255, 0.7); /* More transparent */
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #original-background {
+        left: 18%;
+    }
+
+    #improved-background {
+        right: 3%;
+    }
+
+    /* Row Headers */
+    .row-box {
+        position: absolute;
+        left: 6%;
+        width: 12%;
+        height: 40px;
+        color: rgb(46, 43, 43);
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+    }
+
+    /* Year Headers */
+    .year-box {
+        position: absolute;
+        width: 10%;
+        height: 50px;
+        background-color: #0a0d3f;
+        color: white;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+    }
+
+    /* Value Boxes */
+    .value-box {
+        position: absolute;
+        width: 10%;
+        height: 37px;
+        background-color: rgba(230, 235, 248, 0.8);
+        color: #302d2d;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Underlines */
+    .underline {
+        position: absolute;
+        width: 85%;
+        height: 2px;
+        background-color: rgba(0, 0, 0, 0.2);
+        left: 10%;
+    }
+    
+    /* Fix for the white box issue */
+    .detailed-analyses-section {
+        margin-top: -10px; /* Adjust this value as needed to eliminate the white gap */
+        padding-top: 20px;
+        background-color: transparent;
+    }
+    
+    /* Enhanced styling for the detailed analysis section */
+    .detailed-analyses-section h2 {
+        color: #600018;
+        font-weight: 500;
+        font-size: 1.8rem;
+        letter-spacing: 0.7px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .detailed-analyses-section p {
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        font-weight: 300;
+        text-align: center;
+    }
+    
+    /* Enhanced button styling */
+    .action-buttons .btn-primary {
+        background: linear-gradient(135deg, #4568DC, #233a80);
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 8px 20px rgba(69, 104, 220, 0.3);
+        transition: all 0.3s ease;
+        font-size: 1.25rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .action-buttons .btn-primary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(69, 104, 220, 0.4);
+    }
+</style>
+
+<script>
+    window.onload = function() {
+        const style = document.createElement('style');
+        const rowLabels = JSON.parse('{{ row_labels|length|tojson|safe }}');
+        const years = JSON.parse('{{ years|length|tojson|safe }}');
+        
+        let css = '';
+        
+        // Position row headers
+        for (let i = 0; i < rowLabels; i++) {
+            css += `
+                #row-${i} {
+                    top: ${135 + (i * 60)}px;
+                }
+            `;
+        }
+        
+        // Position year headers
+        for (let j = 0; j < years; j++) {
+            css += `
+                #year-original-${j} {
+                    top: 70px;
+                    left: ${21 + (j * 11.5)}%;
+                }
+                #year-improved-${j} {
+                    top: 70px;
+                    right: ${29 - (j * 11.5)}%;
+                }
+            `;
+        }
+        
+        // Position value boxes
+        for (let i = 0; i < rowLabels; i++) {
+            for (let j = 0; j < years; j++) {
+                css += `
+                    #value-original-${i}-${j} {
+                        top: ${135 + (i * 60)}px;
+                        left: ${21 + (j * 11.5)}%;
+                    }
+                    #value-improved-${i}-${j} {
+                        top: ${135 + (i * 60)}px;
+                        right: ${29 - (j * 11.5)}%;
+                    }
+                `;
+            }
+        }
+        
+        // Remove backgrounds for specific metrics
+        for (let j = 0; j < years; j++) {
+            css += `
+                #value-original-1-${j}, #value-improved-1-${j},
+                #value-original-3-${j}, #value-improved-3-${j},
+                #value-original-4-${j}, #value-improved-4-${j},
+                #value-original-5-${j}, #value-improved-5-${j} {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                }
+            `;
+        }
+        
+        // Position underlines
+        for (let i = 0; i < rowLabels - 1; i++) {
+            css += `
+                #underline-${i} {
+                    top: ${180 + (i * 60)}px;
+                }
+            `;
+        }
+        
+        style.textContent = css;
+        document.head.appendChild(style);
+        
+        // Add hover effects to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseover', function() {
+                if (this.classList.contains('btn-primary')) {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 12px 25px rgba(69, 104, 220, 0.4)';
+                }
+            });
+            
+            btn.addEventListener('mouseout', function() {
+                if (this.classList.contains('btn-primary')) {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 8px 20px rgba(69, 104, 220, 0.3)';
+                }
+            });
+        });
+    };
+</script>
+
+<div class="results-container">
+    
+    <!-- Light Backgrounds -->
+    <div id="original-background" class="income-background"></div>
+    <div id="improved-background" class="income-background"></div>
+
+    <!-- Top Headers -->
+    <div id="original-header" class="header-box">Original Income Statement</div>
+    <div id="improved-header" class="header-box">Improved Income Statement</div>
+
+    <!-- Row Headers -->
+    {% for i in range(row_labels|length) %}
+    <div id="row-{{ i }}" class="row-box"><strong>{{ row_labels[i] }}</strong></div>
+    {% endfor %}
+
+    <!-- Year Headers -->
+    {% for j in range(years|length) %}
+    <div id="year-original-{{ j }}" class="year-box">{{ years[j] }}</div>
+    <div id="year-improved-{{ j }}" class="year-box">{{ years[j] }}</div>
+    {% endfor %}
+
+    <!-- Value Boxes -->
+    {% for i in range(row_labels|length) %}
+        {% for j in range(years|length) %}
+        <div id="value-original-{{ i }}-{{ j }}" class="value-box">
+            {% if "Rate" in row_labels[i] or "Margin" in row_labels[i] %}
+                {{ "%.1f"|format(original_values[i][j]) }}%
+            {% elif "Rule of" in row_labels[i] %}
+                {{ "%.0f"|format(original_values[i][j]) }}
+            {% elif "EBITDA Multiple" in row_labels[i] %}
+                {{ "%.1f"|format(original_values[i][j]|round(1)) }}x
+            {% else %}
+                ${{ "%.2f"|format(original_values[i][j]/1_000_000) }}M
+            {% endif %}
+        </div>
+        <div id="value-improved-{{ i }}-{{ j }}" class="value-box">
+            {% if "Rate" in row_labels[i] or "Margin" in row_labels[i] %}
+                {{ "%.1f"|format(improved_values[i][j]) }}%
+            {% elif "Rule of" in row_labels[i] %}
+                {{ "%.0f"|format(improved_values[i][j]) }}
+            {% elif "EBITDA Multiple" in row_labels[i] %}
+                {{ "%.1f"|format(improved_values[i][j]|round(1)) }}x
+            {% else %}
+                ${{ "%.2f"|format(improved_values[i][j]/1_000_000) }}M
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endfor %}
+
+    <!-- Underline Lines -->
+    {% for i in range(row_labels|length - 1) %}
+    <div id="underline-{{ i }}" class="underline"></div>
+    {% endfor %}
+
+</div>
+
+<!-- Removed content-card div that was causing the white space gap -->
+
+<div class="detailed-analyses-section">
+    <h2>Download Analysis Results</h2>
+    <p>Ready to download a detailed report of your optimization opportunities?</p>
+    
+    <div class="action-buttons" style="margin: 20px 0; display: flex; justify-content: center; gap: 15px;">
+        <a href="{{ url_for('export_ebitda_bridge_route') }}" class="btn btn-primary" id="download-results-button">Download Results</a>
+    </div>
+</div>
+
+<script>
+// Add this script to debug the download button
+document.getElementById('download-results-button').addEventListener('click', function(e) {
+    console.log('Download Results button clicked, requesting file from: ' + this.href);
+});
+</script>
+
+{% endblock %}

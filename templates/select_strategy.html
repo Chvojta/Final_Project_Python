@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body_class %}strategy-select{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <h1>Select Your Analysis Strategy</h1>
+    <p>Choose how aggressively you want to optimize your business:</p>
+    
+    <form action="{{ url_for('select_analyses') }}" method="POST">
+        <div class="strategy-options">
+            <div class="strategy-card">
+                <input type="radio" id="high" name="strategy" value="High">
+                <label for="high">
+                    <h3>Aggressive</h3>
+                    <p>Target aggressive cost optimization and revenue growth</p>
+                </label>
+            </div>
+            
+            <div class="strategy-card">
+                <input type="radio" id="medium" name="strategy" value="Medium" checked>
+                <label for="medium">
+                    <h3>Medium</h3>
+                    <p>Balanced approach to optimization</p>
+                </label>
+            </div>
+            
+            <div class="strategy-card">
+                <input type="radio" id="low" name="strategy" value="Low">
+                <label for="low">
+                    <h3>Conservative</h3>
+                    <p>Focus on safer, incremental improvements</p>
+                </label>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn">Continue to Analyses</button>
+    </form>
+</div>
+{% endblock %} 
