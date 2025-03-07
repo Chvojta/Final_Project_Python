@@ -181,24 +181,6 @@ body::after {
 }
 
 
-.guide-panel * {
-    background-color: transparent;
-}
-
-.guide-steps {
-    background: none;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem; 
-}
-
-.guide-title {
-    color: #403d3d; 
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-weight: bold;
-}
 
 .step {
     display: flex;

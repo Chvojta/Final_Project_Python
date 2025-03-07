@@ -195,9 +195,9 @@ def calculate_all_metrics(strategy="Medium", selected_analyses=None, df_inputs=N
             else:
                 annual_revenue = float(support_revenue)
                 support_revenue = np.array([
-                    annual_revenue * 0.33,  # Year 1 (33% implementation)
-                    annual_revenue * 0.66,  # Year 2 (66% implementation)
-                    annual_revenue          # Year 3 (100% implementation)
+                    annual_revenue * 0.33,  # implementation schedule
+                    annual_revenue * 0.66,  
+                    annual_revenue          
                 ])
         
         # Ensure the array has length 3 (one for each year)
@@ -417,7 +417,6 @@ def calculate_all_metrics(strategy="Medium", selected_analyses=None, df_inputs=N
                 current_other_cogs = income_statement.loc[income_statement['Line Item'] == 'Other'].iloc[:, 1:4].values.flatten()
                 current_other_pct = current_other_cogs / original_revenue * 100
                 
-                # Get benchmark percentage based on strategy
                 benchmark_pct = OTHER_COGS_BENCHMARKS[strategy] * 100
                 
                 # Calculate potential savings - but only if current is higher than benchmark
@@ -662,9 +661,6 @@ def calculate_all_metrics_with_breakdown(strategy="Medium", selected_analyses=No
     # Get base metrics first
     metrics = calculate_all_metrics(strategy, selected_analyses, df_inputs)
     
-    # Add detailed breakdown for each analysis type
-    # This helps with creating bridge charts
-    
     # Initialize breakdown dictionary if it doesn't exist
     if 'ebitda_breakdown' not in metrics:
         metrics['ebitda_breakdown'] = {}
@@ -672,7 +668,6 @@ def calculate_all_metrics_with_breakdown(strategy="Medium", selected_analyses=No
     # Extract years from the data
     years = [2022, 2023, 2024]
     
-    # Create an EBITDA bridge for visualization
     ebitda_bridge = []
     
     # Get the original EBITDA
@@ -780,7 +775,6 @@ def calculate_all_metrics_with_breakdown(strategy="Medium", selected_analyses=No
     
     # Add final EBITDA
     if 'EBITDA' in metrics and 'improved' in metrics['EBITDA']:
-        # Use running_total instead of pre-calculated final_ebitda to ensure all contributions are included
         ebitda_bridge.append({
             'label': 'Final EBITDA',
             'value': running_total,
@@ -857,13 +851,13 @@ def calculate_support_revenue(strategy="Medium", df_inputs=None):
         if 'Percentage of Total' in df_support.columns:
             # Try to convert percentages to numeric values
             try:
-                # If percentages are stored as strings with % sign
+                # See if percentages are stored as strings with % sign
                 if df_support['Percentage of Total'].dtype == 'object':
                     df_support['Percentage of Total'] = df_support['Percentage of Total'].str.rstrip('%').astype('float') / 100
-                # If percentages are already numeric but formatted as percentages (e.g. 0.01 for 1%)
+                # else check if percentages are already numeric but formatted as percentages (e.g. 0.01 for 1%)
                 elif df_support['Percentage of Total'].max() <= 1.0:
                     print("Percentages appear to be in decimal form already")
-                # If percentages are numeric but represented as whole numbers (e.g. 1 for 1%)
+                # otherwise percentages are numeric but represented as whole numbers (e.g. 1 for 1%)
                 else:
                     df_support['Percentage of Total'] = df_support['Percentage of Total'] / 100
                     print("Converted whole number percentages to decimal form")
@@ -877,12 +871,9 @@ def calculate_support_revenue(strategy="Medium", df_inputs=None):
         
         # Find the premium customers - those with more than 2% of total spend
         try:
-            # Use a much lower threshold to increase the number of premium customers
             premium_threshold = 0.02  
             
-            # Check if we need to handle percentage format (if values are like "1%" instead of 0.01)
             if 'Percentage of Total' in df_support.columns:
-                
                 premium_customers = df_support[df_support['Percentage of Total'] > premium_threshold].shape[0]
                 
                 # If we found premium customers, calculate revenue
@@ -890,7 +881,7 @@ def calculate_support_revenue(strategy="Medium", df_inputs=None):
                     # Calculate revenue: $3000 per premium customer
                     annual_revenue = premium_customers * 3000
                     
-                    # Create phased implementation over 3 years (50%, 75%, 100%)
+                    # Create phased implementation over three yrs
                     support_revenue = np.array([
                         annual_revenue * 0.5, 
                         annual_revenue * 0.75,  

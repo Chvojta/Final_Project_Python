@@ -92,19 +92,16 @@ def upload():
     # Create uploads directory if it doesn't exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
-    # Generate a unique filename based on session id
     session_id = session.get('session_id', str(uuid.uuid4()))
     session['session_id'] = session_id
     
-    # Store file with session ID to make it unique
+    # Store file with session ID
     file = request.files["file"]
     session_filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"inputs_{session_id}.xlsx")
     
     try:
-        # Save the file
+        # Save the file and store path in sessin
         file.save(session_filepath)
-        
-        # Store the file path in session
         session['input_file_path'] = session_filepath
         session['file_uploaded'] = True
         
@@ -124,11 +121,8 @@ def results():
     df_inputs = get_dataframes_from_session()
     
     if request.method == "POST":
-        # Process form data from select_analyses
         strategy = request.form.get("strategy", "Medium")
         selected_analyses = request.form.getlist("analyses")
-        
-        # Store in session for persistence across requests
         session['strategy'] = strategy
         session['selected_analyses'] = selected_analyses
         
@@ -213,10 +207,8 @@ def download_template():
     Route to download the input template Excel file.
     """
     try:
-        # Path to the template file in the root directory
+        # Path to the template file / ensure file exists
         template_path = os.path.join(os.path.dirname(__file__), 'Inputs_Template.xlsx')
-        
-        # Check if file exists
         if not os.path.exists(template_path):
             flash("Template file not found.", "error")
             return redirect(url_for("get_started"))
@@ -234,9 +226,6 @@ def download_template():
         return redirect(url_for("get_started"))
 
 if __name__ == "__main__":
-    # Create uploads directory if it doesn't exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    
-    # Run the app
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
